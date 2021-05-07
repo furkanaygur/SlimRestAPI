@@ -41,7 +41,6 @@ $app->get('/posts/{id}/comments', function (Request $request, Response $response
         $query->execute([
             'id' => $id
         ]);
-        $posts = $query->fetchAll(PDO::FETCH_OBJ);
         if ($posts) {
             return $response->withStatus(200)->withHeader('Content-Type', 'application/json')
                 ->withJson($posts);
