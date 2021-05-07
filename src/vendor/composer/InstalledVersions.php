@@ -203,6 +203,15 @@ private static $installed = array (
       ),
       'reference' => '120b605dfeb996808c31b6477290a714d356e822',
     ),
+    'slim/http' => 
+    array (
+      'pretty_version' => '1.2.0',
+      'version' => '1.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '3bc9d61b5243cab0d75c89d778bd69464de07354',
+    ),
     'slim/psr7' => 
     array (
       'pretty_version' => '1.3.0',

@@ -9,6 +9,6 @@ require '../src/config/db.php';
 
 $app = AppFactory::create();
 
-require '../src/routes/posts.php';
+require '../src/config/router.php';
 
 $app->run();
