@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 require '../src/vendor/autoload.php';
-
+include '../api/script.php';
 $app = AppFactory::create();
 
 $app->get('/posts', function (Request $request, Response $response) {
@@ -53,6 +53,39 @@ $app->get('/posts/{id}/comments', function (Request $request, Response $response
                 'message' => 'Not Found!'
             ]
         ]);
+    } catch (PDOException $err) {
+        return $response->withJson([
+            'error' => [
+                'code' => $err->getCode(),
+                'message' => $err->getMessage()
+            ]
+        ]);
+    }
+
+    $db = null;
+});
+
+$app->get('/posts/add', function (Request $request, Response $response) {
+
+    $db = new Db();
+    try {
+        $db = $db->connect();
+        $query = $db->prepare('INSERT INTO posts (id, userId, title, body) VALUES (:id, :userId, :title, :body) ');
+
+        $posts = getPosts();
+        foreach ($posts as $key => $value) {
+            if($value['id'] == 1) continue;
+            $query->bindParam('id', $value['id']);
+            $query->bindParam('userId', $value['userId']);
+            $query->bindParam('title', $value['title']);
+            $query->bindParam('body', $value['body']);
+            $query->execute();
+        }
+    
+        return $response->withStatus(200)->withJson([
+            'message' => 'Datas added.'
+        ]);
+
     } catch (PDOException $err) {
         return $response->withJson([
             'error' => [

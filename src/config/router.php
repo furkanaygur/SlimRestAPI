@@ -11,7 +11,6 @@ $app = AppFactory::create();
 $_url = parse_url($_SERVER['REQUEST_URI']);
 $_routes = explode('/', $_url['path']);
 $_baseRoute = $_routes[1];
-
 switch ($_baseRoute) {
     case 'posts':
         require '../src/routes/posts.php';
@@ -20,13 +19,25 @@ switch ($_baseRoute) {
         require '../src/routes/comments.php';
         break;
     default:
-        $app->get('/' . $_baseRoute, function (Request $request, Response $response) {
+        if ($_baseRoute) {
+            $app->get('/' . $_baseRoute, function (Request $request, Response $response) {
+                return $response->withJson([
+                    'error' => [
+                        'code' => 400,
+                        'message' => 'Bad Request',
+                    ]
+                ]);
+            });
+        }
+
+        $app->get('/', function (Request $request, Response $response) {
             return $response->withJson([
-                'error' => [
-                    'code' => 400,
-                    'message' => 'Bad Request',
+                'pages' => [
+                    'posts' => $_SERVER['HTTP_HOST'] . '/posts',
+                    'comments' => $_SERVER['HTTP_HOST'] . '/comments',
                 ]
             ]);
         });
+
         break;
 }
