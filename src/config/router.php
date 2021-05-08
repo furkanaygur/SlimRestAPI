@@ -2,11 +2,8 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
 
 require '../src/vendor/autoload.php';
-
-$app = AppFactory::create();
 
 $_url = parse_url($_SERVER['REQUEST_URI']);
 $_routes = explode('/', $_url['path']);
@@ -35,6 +32,7 @@ switch ($_baseRoute) {
                 'pages' => [
                     'posts' => $_SERVER['HTTP_HOST'] . '/posts',
                     'comments' => $_SERVER['HTTP_HOST'] . '/comments',
+                    'comments of post' => $_SERVER['HTTP_HOST'] . 'posts/{post_id}/comments',
                 ]
             ]);
         });

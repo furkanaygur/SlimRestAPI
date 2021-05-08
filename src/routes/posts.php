@@ -2,11 +2,10 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
 
 require '../src/vendor/autoload.php';
 include '../api/script.php';
-$app = AppFactory::create();
+
 
 $app->get('/posts', function (Request $request, Response $response) {
 
@@ -21,8 +20,8 @@ $app->get('/posts', function (Request $request, Response $response) {
     } catch (PDOException $err) {
         return $response->withJson([
             'error' => [
+                'code' => $err->getCode(),
                 'message' => $err->getMessage(),
-                'code' => $err->getCode()
             ]
         ]);
     }
@@ -41,6 +40,7 @@ $app->get('/posts/{id}/comments', function (Request $request, Response $response
         $query->execute([
             'id' => $id
         ]);
+        $posts = $query->fetchAll(PDO::FETCH_OBJ);
         if ($posts) {
             return $response->withStatus(200)->withHeader('Content-Type', 'application/json')
                 ->withJson($posts);
@@ -73,19 +73,25 @@ $app->get('/posts/add', function (Request $request, Response $response) {
 
         $posts = getPosts();
         foreach ($posts as $key => $value) {
-            if($value['id'] == 1) continue;
             $query->bindParam('id', $value['id']);
             $query->bindParam('userId', $value['userId']);
             $query->bindParam('title', $value['title']);
             $query->bindParam('body', $value['body']);
             $query->execute();
         }
-    
+
         return $response->withStatus(200)->withJson([
             'message' => 'Datas added.'
         ]);
-
     } catch (PDOException $err) {
+        if ($err->getCode() == "23000") {
+            return $response->withJson([
+                'warning' => [
+                    'code' => $err->getCode(),
+                    'message' => "It looks like it already has the data."
+                ]
+            ]);
+        }
         return $response->withJson([
             'error' => [
                 'code' => $err->getCode(),

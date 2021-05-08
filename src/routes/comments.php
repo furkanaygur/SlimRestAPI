@@ -2,11 +2,9 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
 
 require '../src/vendor/autoload.php';
 include '../api/script.php';
-$app = AppFactory::create();
 
 $app->get('/comments', function (Request $request, Response $response) {
 
@@ -39,7 +37,6 @@ $app->get('/comments/add', function (Request $request, Response $response) {
 
         $comments = getComments();
         foreach ($comments as $key => $value) {
-            if($value['id'] == 1) continue;
             $query->bindParam('id', $value['id']);
             $query->bindParam('postId', $value['postId']);
             $query->bindParam('name', $value['name']);
@@ -47,12 +44,19 @@ $app->get('/comments/add', function (Request $request, Response $response) {
             $query->bindParam('body', $value['body']);
             $query->execute();
         }
-    
+
         return $response->withStatus(200)->withJson([
             'message' => 'Datas added.'
         ]);
-
     } catch (PDOException $err) {
+        if ($err->getCode() == "23000") {
+            return $response->withJson([
+                'warning' => [
+                    'code' => $err->getCode(),
+                    'message' => "It looks like it already has the data."
+                ]
+            ]);
+        }
         return $response->withJson([
             'error' => [
                 'code' => $err->getCode(),
@@ -63,5 +67,3 @@ $app->get('/comments/add', function (Request $request, Response $response) {
 
     $db = null;
 });
-
- 
