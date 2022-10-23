@@ -1,4 +1,5 @@
 # PHP
+
 # Test and package your PHP project.
 # Add steps that run tests, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/php
@@ -34,11 +35,9 @@ steps:
     script: |
       ls
 
-- task: Bash@3
+- task: CmdLine@2
   inputs:
-    targetType: 'inline'
-    script: |
-      cd src
+    script: 'cd src/'
 
 - task: Bash@3
   inputs:
