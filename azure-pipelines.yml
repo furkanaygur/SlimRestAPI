@@ -20,8 +20,14 @@ steps:
     sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
     sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
     php -version
-    cd src
   displayName: 'Use PHP version $(phpVersion)'
+
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      pwd
+      cd src
 
 - script: composer install --no-interaction --prefer-dist
   displayName: 'composer install'
