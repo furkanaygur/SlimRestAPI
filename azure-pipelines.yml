@@ -30,6 +30,4 @@ steps:
       cd /home/vsts/work/1/s/src
       pwd
       ls
-
-- script: composer install --no-interaction --prefer-dist
-  displayName: 'composer install'
+      php composer.phar install
